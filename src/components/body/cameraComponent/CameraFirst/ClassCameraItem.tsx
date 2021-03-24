@@ -61,6 +61,7 @@ class ClassCameraItem extends Component {
             flatShading: true
         } );
         this.cube = new THREE.Mesh( geometry, material );
+        this.cube.position.copy(new THREE.Vector3(0,0,0))
         this.scene.add( this.cube );
 
         const lights = [];
