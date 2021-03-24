@@ -1,0 +1,20 @@
+.nav_container{
+    margin-top: 25px;
+    height: 10vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navMenu{
+
+}
+
+.navMenu__ul{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
