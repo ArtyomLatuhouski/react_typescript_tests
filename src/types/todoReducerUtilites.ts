@@ -1,11 +1,10 @@
 export interface TodoState {
-    todos: [],
+    todos: any[],
     loading: boolean,
     error: null | string,
     page: number,
     limit: number
 }
-
 
 export enum TodoActionsTypes {
     FETCH_TODO = "FETCH_TODO",
@@ -36,7 +35,7 @@ interface SetTodoPageAction {
 
 
 export type TodoActions =
-      FetchTodoAction
+    FetchTodoAction
     | FetchTodoSuccessAction
     | FetchTodoErrorAction
     | SetTodoPageAction
