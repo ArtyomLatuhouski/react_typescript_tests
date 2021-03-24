@@ -11,7 +11,6 @@ import SceneComponent from "./components/body/sceneComponent/SceneComponent";
 import GeoMatComponent from "./components/body/geoMatComponent/GeoMatComponent";
 import CameraComponent from "./components/body/cameraComponent/CameraComponent";
 
-
 function App() {
 
     return (

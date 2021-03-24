@@ -1,10 +1,10 @@
 // OUTER
-import React, {useState, useEffect} from 'react';
-import {useDispatch} from "react-redux";
+import React, {useEffect} from 'react';
+
 
 //LOCAL
 import {useTypeSelector} from "../hooks/useTypedSelector";
-import {fetchUsers} from "../store/action_creators/user";
+// import {fetchUsers} from "../store/action_creators/user";
 import {useActions} from "../hooks/useActions";
 
 

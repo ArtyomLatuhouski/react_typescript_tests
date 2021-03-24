@@ -1,14 +1,18 @@
 // OUTER
 import React, {useState, useEffect} from 'react'
 
-//LOCAL
 
+//LOCAL
+import CameraFirst from "./CameraFirst/CameraFirst";
+// @ts-ignore
+import ClassCameraItem from "./CameraFirst/ClassCameraItem";
 
 const CameraComponent: React.FC = () => {
     return (
-        <>
-            camera
-        </>
+        <div className="cameraContainer">
+            {/*<CameraFirst/>*/}
+            <ClassCameraItem/>
+        </div>
     )
 }
 

@@ -1,5 +1,5 @@
 // OUTER
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 
 
 //LOCAL
@@ -23,8 +23,8 @@ const NavigateBlock: React.FC = () => {
         <div className="nav_container">
             <nav className="navMenu">
                 <ul className="navMenu__ul">
-                    {navItems.map((item:INavItems):JSX.Element=>{
-                        return <MenuItem data={item}/>
+                    {navItems.map((item:INavItems,index):JSX.Element=>{
+                        return <MenuItem key={index} data={item}/>
                     })}
                 </ul>
             </nav>
