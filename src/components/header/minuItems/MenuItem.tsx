@@ -13,7 +13,7 @@ const MenuItem: IMenuItem = (props: { data: { path: string, name: string } }) =>
         <li className="navMenu__li">
             <NavLink
                 exact
-                to={"./" + props.data.path}
+                to={"/" + props.data.path}
                 activeClassName="navMenu__navLink__active"
                 className="navMenu__navLink"
             >
