@@ -65,7 +65,6 @@ class ClassCameraItem extends Component {
             flatShading: true
         } );
 
-
         this.cube = new THREE.Mesh( geometry, material );
         this.cube2 = new THREE.Mesh( geometry, material );
 

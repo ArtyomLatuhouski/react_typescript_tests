@@ -4,19 +4,18 @@ import React, {useState, useEffect} from 'react'
 
 //LOCAL
 import ClassCameraItem from "./CameraFirst/ClassCameraItem";
+import CameraFirst from "./CameraFirst/CameraFirst";
 
 
 
 const CameraComponent: React.FC = () => {
     return (
-        <div className="cameraContainer">
+        <>
+            <CameraFirst/>
+            <span>PerspectiveCamera </span>
+            <ClassCameraItem/>
 
-            <span>PerspectiveCamera </span>
-            <ClassCameraItem/>
-            <br/>
-            <span>PerspectiveCamera </span>
-            <ClassCameraItem/>
-        </div>
+        </>
     )
 }
 
