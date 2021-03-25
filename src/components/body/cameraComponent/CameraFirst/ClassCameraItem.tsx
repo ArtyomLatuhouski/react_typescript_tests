@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import {BoxGeometry, Mesh, MeshPhongMaterial, PerspectiveCamera} from "three";
+import {BoxGeometry, Mesh, MeshPhongMaterial, PerspectiveCamera, StereoCamera} from "three";
 
 
 class ClassCameraItem extends Component {
@@ -17,6 +17,7 @@ class ClassCameraItem extends Component {
     private camera: PerspectiveCamera | undefined | any;
     private renderer: any;
     private cube: Mesh<BoxGeometry, MeshPhongMaterial> | undefined | any;
+    private cube2: Mesh<BoxGeometry, MeshPhongMaterial> | undefined | any;
 
     componentDidMount() {
         this.sceneSetup();
@@ -31,7 +32,7 @@ class ClassCameraItem extends Component {
 
     sceneSetup = () => {
 
-        const width = 300;
+        const width = 900;
         const height = 300;
 
         this.scene = new THREE.Scene();
@@ -42,7 +43,11 @@ class ClassCameraItem extends Component {
             1000 // far plane
         );
 
-        this.camera.position.z = 9;
+        // this.camera = new THREE.OrthographicCamera( width / - 30, width / 30, height / 30, height / - 30, 1, 1000 );
+
+
+
+        this.camera.position.z = 20;
 
         this.controls = new OrbitControls( this.camera, this.mount ); // надо разобраться
 
@@ -50,7 +55,6 @@ class ClassCameraItem extends Component {
         this.renderer.setSize( width, height );
         this.mount.appendChild( this.renderer.domElement );
     };
-
 
     addCustomSceneObjects = () => {
         const geometry = new THREE.BoxGeometry(5, 5, 5);
@@ -60,9 +64,16 @@ class ClassCameraItem extends Component {
             side: THREE.DoubleSide,
             flatShading: true
         } );
+
+
         this.cube = new THREE.Mesh( geometry, material );
-        this.cube.position.copy(new THREE.Vector3(0,0,0))
+        this.cube2 = new THREE.Mesh( geometry, material );
+
+        this.cube.position.copy(new THREE.Vector3(6,0,0))
+        this.cube2.position.copy(new THREE.Vector3(-8,0,0))
+
         this.scene.add( this.cube );
+        this.scene.add( this.cube2 );
 
         const lights = [];
         lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
@@ -81,6 +92,14 @@ class ClassCameraItem extends Component {
     startAnimationLoop = () => {
         this.cube.rotation.x += 0.01;
         this.cube.rotation.y += 0.01;
+
+        this.cube2.rotation.x += 0.01;
+        this.cube2.rotation.y += 0.01;
+
+        if (this.camera.position.z > 10) this.camera.position.z -= 0.1;
+        // if (this.camera.position.x !== -2) this.camera.position.x -= 0.1;
+
+
         this.renderer.render( this.scene, this.camera );
 
         this.requestID = window.requestAnimationFrame(this.startAnimationLoop);
