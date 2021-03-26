@@ -11,7 +11,7 @@ import CameraFirst from "./CameraFirst/CameraFirst";
 const CameraComponent: React.FC = () => {
     return (
         <>
-            <CameraFirst/>
+            <CameraFirst />
             <span>PerspectiveCamera </span>
             <ClassCameraItem/>
 

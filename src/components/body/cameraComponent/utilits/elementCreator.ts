@@ -3,7 +3,8 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Mesh} from "three";
 import {MutableRefObject} from "react";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-
+// @ts-ignore
+import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader.js';
 
 //  !! функция создания куба
 export function creatBox(x: number, y: number, z: number) {
@@ -90,7 +91,7 @@ export class Creator {
 
             // сетка
             const helper = new THREE.GridHelper(100, 100);
-            helper.position.y = -3;
+            helper.position.y = -1;
             // @ts-ignore
             helper.material.opacity = 0.25;
             // @ts-ignore
@@ -114,9 +115,7 @@ export class Creator {
             (<THREE.WebGLRenderer>this.renderer).setSize(width, height);
 
             const canvas = (<THREE.WebGLRenderer>this.renderer).domElement
-            //-
 
-            //-
             // @ts-ignore // because на улице мороз ) не хочет оно ref ловить ...
             mount.current.appendChild(canvas);
 
@@ -130,6 +129,14 @@ export class Creator {
             this.controls = new OrbitControls(this.camera, canvas);
             // @ts-ignore
 
+            // - импортируем модель по url
+            const objLoader = new OBJLoader();
+            objLoader.load('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj',
+                (root: THREE.Object3D) => {
+                root.position.set(6, 0, -6)
+                this.scene.add(root);
+            });
+            //  -
             this.startAnimation()
         }
 

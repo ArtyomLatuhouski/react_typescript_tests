@@ -7,7 +7,7 @@ import {World} from "../utilits/creatImportElements";
 
 
 
-const CameraFirst: React.FC = () => {
+const CameraFirst: React.FC = (props) => {
     const canvasElem = useRef(null)
 
     // const element = new Creator([creatBox(0, 0, 0), creatBox(1, 0, 0)])
