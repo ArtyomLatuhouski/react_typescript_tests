@@ -1,7 +1,9 @@
 // OUTER
-import React, {useState, useEffect, useRef, useMemo} from 'react'
-import {creatBox, Creator,generationCubs} from "../utilits/elementCreator";
-import {World} from "../utilits/creatImportElements";
+import React, { useEffect, useRef} from 'react'
+import {Creator} from "../../utilits/elementCreator";
+import {generationCubs} from "../../utilits/creatMashElemFunctions";
+
+
 
 //LOCAL
 
@@ -9,8 +11,6 @@ import {World} from "../utilits/creatImportElements";
 
 const CameraFirst: React.FC = (props) => {
     const canvasElem = useRef(null)
-
-    // const element = new Creator([creatBox(0, 0, 0), creatBox(1, 0, 0)])
 
     const element = new Creator(generationCubs(5, 5))
 

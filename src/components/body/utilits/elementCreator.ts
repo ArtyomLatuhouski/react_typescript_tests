@@ -1,45 +1,10 @@
+// outer
 import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Mesh} from "three";
 import {MutableRefObject} from "react";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-// @ts-ignore
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader.js';
-
-//  !! функция создания куба
-export function creatBox(x: number, y: number, z: number) {
-    const geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
-    const material = new THREE.MeshPhongMaterial({
-        color: '#140ccd',
-        emissive: 0x072534,
-        side: THREE.DoubleSide,
-        flatShading: true
-    });
-    const cube = new THREE.Mesh(geometry, material);
-    cube.position.copy(new THREE.Vector3(x, y, z))
-
-    return cube
-}
-
-//  !! функция создания куба кубов )
-export function generationCubs(maxWidth: number, maxHeight: number) {
-    let array = []
-
-    function widthGeneration(maxWidth: number, height: number) {
-        let width = []
-        for (let i = 0; i < maxWidth; i++) {
-            for (let j = 0; j < maxWidth; j++) {
-                width.push(creatBox(i, j, height))
-            }
-        }
-        return width
-    }
-
-    for (let i = 0; i < maxHeight; i++) {
-        array.push(...widthGeneration(maxWidth, i))
-    }
-    return array
-}
 
 //  !! функция создания объекта
 
@@ -73,9 +38,9 @@ export class Creator {
                 75,
                 width / height,
                 0.1,
-                1000
+                5000
             );
-            this.camera.position.z = 15;
+            this.camera.position.z = 1115;
             // this.camera.position.y = 7;
 
             //добавляем элементы в сцену
@@ -128,6 +93,44 @@ export class Creator {
 
             this.controls = new OrbitControls(this.camera, canvas);
             // @ts-ignore
+
+            // -
+            {
+                const skyColor = 0xB1E1FF;  // light blue
+                const groundColor = 0xB97A20;  // brownish orange
+                const intensity = 1;
+                const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+                this.scene.add(light);
+            }
+
+            {
+                const color = 0xFFFFFF;
+                const intensity = 1;
+                const light = new THREE.DirectionalLight(color, intensity);
+                light.position.set(5, 10, 2);
+                this.scene.add(light);
+                this.scene.add(light.target);
+            }
+            const gltfLoader = new GLTFLoader();
+            gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
+                const root = gltf.scene;
+                this.scene.add(root);
+                // compute the box that contains all the stuff
+                // from root and below
+                const box = new THREE.Box3().setFromObject(root);
+
+                const boxSize = box.getSize(new THREE.Vector3()).length();
+                const boxCenter = box.getCenter(new THREE.Vector3());
+
+                // set the camera to frame the box
+                // frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
+
+                // update the Trackball controls to handle the new size
+                // this.controls.maxDistance = boxSize * 10;
+                // controls.target.copy(boxCenter);
+                // controls.update();
+            })
+            // -
 
             // - импортируем модель по url
             const objLoader = new OBJLoader();

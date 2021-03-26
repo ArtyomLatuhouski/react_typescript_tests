@@ -13,9 +13,10 @@ interface INavItems{
 
 const navItems:INavItems[]=[
     {path:"",name:"ajax TypeScript"},
-    {path:"scene",name:"scene experts"},
+    // {path:"scene",name:"scene experts"},
     {path:"camera",name:"camera experts"},
-    {path:"geo-mat",name:"geometry & materials experts"},
+    // {path:"geo-mat",name:"geometry & materials experts"},
+    {path:"other",name:"Other experts"}
 ]
 
 const NavigateBlock: React.FC = () => {
