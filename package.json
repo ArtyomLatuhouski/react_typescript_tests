@@ -52,6 +52,7 @@
     ]
   },
   "devDependencies": {
-    "@types/three": "^0.126.1"
+    "@types/three": "^0.126.1",
+    "jsdom-quokka-plugin": "^1.0.16"
   }
 }

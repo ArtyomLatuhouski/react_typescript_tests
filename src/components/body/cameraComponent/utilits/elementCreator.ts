@@ -63,7 +63,7 @@ export class Creator {
 
         this.init = (mount: HTMLElement | MutableRefObject<null>) => {
             const width = 900;
-            const height = 300;
+            const height = 400;
 
             this.camera = new THREE.PerspectiveCamera(
                 75,
@@ -71,7 +71,8 @@ export class Creator {
                 0.1,
                 1000
             );
-            this.camera.position.z = 13;
+            this.camera.position.z = 15;
+            this.camera.position.y = 13;
 
             //добавляем элементы в сцену
 
@@ -81,8 +82,27 @@ export class Creator {
                 ? (<THREE.Mesh[]>this.element).forEach(item => (<THREE.Group>this.group).add(item))
                 : (<THREE.Group>this.group).add(this.element);
 
-            this.group.position.set(0, 0, -2)
+            this.group.position.set(0, 2, -2)
             this.scene.add(this.group)
+
+            //expects
+            // let planeGeometry = new THREE.PlaneBufferGeometry(500, 500);
+            // planeGeometry.rotateX(-Math.PI / 2);
+            // const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
+            //
+            // const  plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            // plane.position.y = 0;
+            // plane.receiveShadow = true;
+            // this.scene.add(plane);
+
+            // сетка
+            const helper = new THREE.GridHelper(100, 100);
+            helper.position.y = -3;
+            // @ts-ignore
+            helper.material.opacity = 0.25;
+            // @ts-ignore
+            helper.material.transparent = true;
+            this.scene.add(helper);
 
             // свет
             const lights = [];
@@ -106,7 +126,8 @@ export class Creator {
             mount.current.appendChild(canvas);
 
             this.controls = new OrbitControls(this.camera, canvas);
-
+            // @ts-ignore
+            console.log(this.group)
             this.startAnimation()
         }
 
