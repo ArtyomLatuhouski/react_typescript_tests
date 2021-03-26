@@ -2,7 +2,10 @@ import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Mesh} from "three";
 import {MutableRefObject} from "react";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
+
+//  !! функция создания куба
 export function creatBox(x: number, y: number, z: number) {
     const geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
     const material = new THREE.MeshPhongMaterial({
@@ -15,9 +18,9 @@ export function creatBox(x: number, y: number, z: number) {
     cube.position.copy(new THREE.Vector3(x, y, z))
 
     return cube
-};
+}
 
-
+//  !! функция создания куба кубов )
 export function generationCubs(maxWidth: number, maxHeight: number) {
     let array = []
 
@@ -35,10 +38,9 @@ export function generationCubs(maxWidth: number, maxHeight: number) {
         array.push(...widthGeneration(maxWidth, i))
     }
     return array
-
 }
 
-// type Camera = THREE.PerspectiveCamera | THREE.OrthographicCamera | THREE.CubeCamera
+//  !! функция создания объекта
 
 export class Creator {
 
@@ -50,13 +52,14 @@ export class Creator {
     private startAnimation: () => void;
     private camera: THREE.PerspectiveCamera | null;
     private controls: OrbitControls | undefined;
-
+    private animationsObjects: any[]
 
     constructor(element: Mesh | Mesh[]) {
         this.element = element
         this.camera = null
         this.group = null
         this.scene = new THREE.Scene()
+        this.animationsObjects = []
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
         })
@@ -72,7 +75,7 @@ export class Creator {
                 1000
             );
             this.camera.position.z = 15;
-            this.camera.position.y = 13;
+            // this.camera.position.y = 7;
 
             //добавляем элементы в сцену
 
@@ -82,18 +85,8 @@ export class Creator {
                 ? (<THREE.Mesh[]>this.element).forEach(item => (<THREE.Group>this.group).add(item))
                 : (<THREE.Group>this.group).add(this.element);
 
-            this.group.position.set(0, 2, -2)
+            this.group.position.set(0, 0, 0)
             this.scene.add(this.group)
-
-            //expects
-            // let planeGeometry = new THREE.PlaneBufferGeometry(500, 500);
-            // planeGeometry.rotateX(-Math.PI / 2);
-            // const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
-            //
-            // const  plane = new THREE.Mesh(planeGeometry, planeMaterial);
-            // plane.position.y = 0;
-            // plane.receiveShadow = true;
-            // this.scene.add(plane);
 
             // сетка
             const helper = new THREE.GridHelper(100, 100);
@@ -121,25 +114,68 @@ export class Creator {
             (<THREE.WebGLRenderer>this.renderer).setSize(width, height);
 
             const canvas = (<THREE.WebGLRenderer>this.renderer).domElement
+            //-
 
+            //-
             // @ts-ignore // because на улице мороз ) не хочет оно ref ловить ...
             mount.current.appendChild(canvas);
 
+            createMoveAnimation({
+                mesh: this.group,
+                startPosition: new THREE.Vector3(0, 10, 0),
+                endPosition: new THREE.Vector3(0, 0,),
+                array: this.animationsObjects
+            })
+
             this.controls = new OrbitControls(this.camera, canvas);
             // @ts-ignore
-            console.log(this.group)
+
             this.startAnimation()
         }
 
+        // старт рендер функция
         this.startAnimation = () => {
             (<THREE.Group>this.group).rotation.x += 0.01;
             (<THREE.Group>this.group).rotation.y += 0.01;
             (<THREE.Group>this.group).rotation.z += 0.01;
 
-
             (<THREE.WebGLRenderer>this.renderer).render(this.scene, <THREE.PerspectiveCamera>this.camera);
 
+            this.animationsObjects.forEach(mesh => {
+                if (mesh.userData.clock && mesh.userData.mixer) {
+                    mesh.userData.mixer.update(mesh.userData.clock.getDelta());
+                }
+            });
             window.requestAnimationFrame(this.startAnimation);
         };
     }
+}
+
+function createMoveAnimation({
+                                 // @ts-ignore
+                                 mesh,
+                                 // @ts-ignore
+                                 startPosition,
+                                 // @ts-ignore
+                                 endPosition,
+                                 // @ts-ignore
+                                 array
+                             }) {
+    mesh.userData.mixer = new THREE.AnimationMixer(mesh);
+    let track = new THREE.VectorKeyframeTrack(
+        '.position', [0, 5, 10], [
+            startPosition.x,
+            startPosition.y,
+            startPosition.z,
+            endPosition.x,
+            endPosition.y,
+            endPosition.z,
+        ]
+    );
+    const animationClip = new THREE.AnimationClip("upElement", 5, [track]);
+    const animationAction = mesh.userData.mixer.clipAction(animationClip);
+    animationAction.setLoop(THREE.LoopOnce);
+    animationAction.play();
+    mesh.userData.clock = new THREE.Clock();
+    array.push(mesh);
 }

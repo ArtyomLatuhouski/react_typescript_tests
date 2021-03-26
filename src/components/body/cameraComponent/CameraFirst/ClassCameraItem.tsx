@@ -5,10 +5,6 @@ import {BoxGeometry, Mesh, MeshPhongMaterial, PerspectiveCamera, StereoCamera} f
 
 
 class ClassCameraItem extends Component {
-    // constructor(props) {
-    //     super(props);
-        // this.mount = React.createRef();
-    // }
 
     private mount: any;
     private requestID: number | undefined;
@@ -114,7 +110,7 @@ class ClassCameraItem extends Component {
     };
 
     render() {
-        return <div style={{height:"300px"}} ref={ref => (this.mount = ref)} />;
+        return <div style={{height:"300px"}} ref={ref => (this.mount = ref)}/>
     }
 }
 
