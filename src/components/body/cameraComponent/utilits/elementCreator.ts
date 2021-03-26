@@ -3,10 +3,10 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Mesh} from "three";
 import {MutableRefObject} from "react";
 
-export function addCustomSceneObjects(x:number,y:number,z:number) {
-    const geometry = new THREE.BoxGeometry(2, 2, 2);
+export function creatBox(x: number, y: number, z: number) {
+    const geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
     const material = new THREE.MeshPhongMaterial({
-        color: 0x156289,
+        color: '#140ccd',
         emissive: 0x072534,
         side: THREE.DoubleSide,
         flatShading: true
@@ -17,8 +17,25 @@ export function addCustomSceneObjects(x:number,y:number,z:number) {
     return cube
 };
 
-interface RefObject<T> {
-    readonly current: T | null;
+
+export function generationCubs(maxWidth: number, maxHeight: number) {
+    let array = []
+
+    function widthGeneration(maxWidth: number, height: number) {
+        let width = []
+        for (let i = 0; i < maxWidth; i++) {
+            for (let j = 0; j < maxWidth; j++) {
+                width.push(creatBox(i, j, height))
+            }
+        }
+        return width
+    }
+
+    for (let i = 0; i < maxHeight; i++) {
+        array.push(...widthGeneration(maxWidth, i))
+    }
+    return array
+
 }
 
 // type Camera = THREE.PerspectiveCamera | THREE.OrthographicCamera | THREE.CubeCamera
@@ -28,10 +45,9 @@ export class Creator {
     private element: THREE.Mesh | THREE.Mesh[];
     private scene: THREE.Scene;
     init: (mount: (HTMLElement | React.MutableRefObject<null>)) => void;
-    private groupStatus: boolean | undefined;
     private group: THREE.Group | null;
     private renderer: THREE.WebGLRenderer | undefined;
-    startAnimation: () => void;
+    private startAnimation: () => void;
     private camera: THREE.PerspectiveCamera | null;
     private controls: OrbitControls | undefined;
 
@@ -41,7 +57,9 @@ export class Creator {
         this.camera = null
         this.group = null
         this.scene = new THREE.Scene()
-        this.renderer = new THREE.WebGLRenderer()
+        this.renderer = new THREE.WebGLRenderer({
+            alpha: true
+        })
 
         this.init = (mount: HTMLElement | MutableRefObject<null>) => {
             const width = 900;
@@ -53,18 +71,18 @@ export class Creator {
                 0.1,
                 1000
             );
-            this.camera.position.z = 15;
-
-            // проверяем на группу и создаем
-            // groupStatus ? this.group = new THREE.Group() : this.group = null
+            this.camera.position.z = 13;
 
             //добавляем элементы в сцену
-            if (element instanceof Array) {
-                this.group = new THREE.Group();
-                (<THREE.Mesh[]>this.element).forEach(item => (<THREE.Group>this.group).add(item))
-                this.scene.add(this.group)
-            } else (<THREE.Scene>this.scene).add(element);
 
+            this.group = new THREE.Group();
+
+            this.element instanceof Array
+                ? (<THREE.Mesh[]>this.element).forEach(item => (<THREE.Group>this.group).add(item))
+                : (<THREE.Group>this.group).add(this.element);
+
+            this.group.position.set(0, 0, -2)
+            this.scene.add(this.group)
 
             // свет
             const lights = [];
@@ -84,14 +102,19 @@ export class Creator {
 
             const canvas = (<THREE.WebGLRenderer>this.renderer).domElement
 
-            // @ts-ignore
+            // @ts-ignore // because на улице мороз ) не хочет оно ref ловить ...
             mount.current.appendChild(canvas);
 
             this.controls = new OrbitControls(this.camera, canvas);
+
             this.startAnimation()
         }
 
         this.startAnimation = () => {
+            (<THREE.Group>this.group).rotation.x += 0.01;
+            (<THREE.Group>this.group).rotation.y += 0.01;
+            (<THREE.Group>this.group).rotation.z += 0.01;
+
 
             (<THREE.WebGLRenderer>this.renderer).render(this.scene, <THREE.PerspectiveCamera>this.camera);
 

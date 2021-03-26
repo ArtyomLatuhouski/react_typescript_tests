@@ -1,6 +1,6 @@
 // OUTER
-import React, {useState, useEffect, useRef,useMemo} from 'react'
-import {addCustomSceneObjects, Creator} from "../utilits/elementCreator";
+import React, {useState, useEffect, useRef, useMemo} from 'react'
+import {creatBox, Creator,generationCubs} from "../utilits/elementCreator";
 
 //LOCAL
 
@@ -9,11 +9,14 @@ import {addCustomSceneObjects, Creator} from "../utilits/elementCreator";
 const CameraFirst: React.FC = () => {
     const canvasElem = useRef(null)
 
-    const element =new Creator ([addCustomSceneObjects(0,0,0),addCustomSceneObjects(4,0,0)])
-    useEffect(()=>element.init(canvasElem),[])
+    // const element = new Creator([creatBox(0, 0, 0), creatBox(1, 0, 0)])
+
+    const element = new Creator(generationCubs(5, 5))
+
+    useEffect(() => element.init(canvasElem), [])
     return (
 
-        <div ref={canvasElem}  >
+        <div ref={canvasElem}>
 
         </div>
     )
