@@ -49,19 +49,24 @@ export class Creator {
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
         })
+
         this.setWidth = (width: number) => {
             this.width = this.width + width
             console.log(this.width)
         }
+
         this.addGrid = () => {
             let grid = creatGrid()
             this.scene.add(grid)
         }
 
         this.addElement=(element: Mesh | Mesh[],inGroup:boolean=false,x:number=0,y:number=0,z:number=0)=>{
-
+            console.log(this.group)
             if (inGroup && element instanceof Array) (<THREE.Group>this.group).add(...element)
-            else if (inGroup && element instanceof Mesh)(<THREE.Group>this.group).add(element)
+            else if (inGroup && element instanceof Mesh) {
+                (<THREE.Group>this.group).add(element)
+                return
+            }
 
             const addGroup = new THREE.Group();
 

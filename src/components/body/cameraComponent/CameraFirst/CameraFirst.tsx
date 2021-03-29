@@ -42,7 +42,8 @@ const CameraFirst: React.FC = (props) => {
                 console.log(111)
                 setCanv(prev=>{
                     let element = creatBox()
-                    prev.addElement(element,false,3,3,3)
+                    prev.addElement(element,true,4,4,4)
+                    console.log(prev)
                     return prev
                 })
             }}/>
