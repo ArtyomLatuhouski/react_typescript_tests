@@ -3,10 +3,14 @@ import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Mesh} from "three";
 import {MutableRefObject} from "react";
-import {getGLTElement, getOBJElement} from "./creatMashElemFunctions";
+import {getGLTElement, getOBJElement} from "./creatImportElements";
+import {creatGrid} from "./otherConstructors";
 
 
-//  !! функция создания объекта
+type Light = THREE.DirectionalLight | THREE.PointLight | THREE.HemisphereLight
+type Camera = THREE.PerspectiveCamera | THREE.OrthographicCamera | THREE.CubeCamera
+
+//  !! function for creat canvas object
 
 export class Creator {
 
@@ -16,136 +20,110 @@ export class Creator {
     private group: THREE.Group | null;
     private renderer: THREE.WebGLRenderer | undefined;
     private startAnimation: () => void;
-    private camera: THREE.PerspectiveCamera |THREE.OrthographicCamera|THREE.CubeCamera | null;
+    private camera: Camera;
     private controls: OrbitControls | undefined;
     private animationsObjects: any[]
+    private lights: Light | Light[] | null;
+    width: number;
+    private height: number;
+    private grid: THREE.GridHelper | null | undefined;
+    private mountTime: boolean;
+    setWidth: (width: number) => void;
+    addGrid: () => void;
+    addElement: (element: (Mesh | Mesh[]), inGroup?: boolean, x?: number, y?: number, z?: number) => void;
 
-    constructor(element: Mesh | Mesh[],scene:THREE.Scene,camera:THREE.PerspectiveCamera | THREE.OrthographicCamera |THREE.CubeCamera) {
+
+
+
+    constructor(element: Mesh | Mesh[], scene: THREE.Scene, camera: Camera, width: number, height: number, grid?: THREE.GridHelper | null, lights?: Light | Light [] | null) {
         this.element = element
-        this.camera = null
+        this.camera = camera
         this.group = null
         this.scene = scene
         this.animationsObjects = []
+        this.lights = lights || null
+        this.width = width
+        this.height = height
+        this.grid = grid
+        this.mountTime = true
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
         })
+        this.setWidth = (width: number) => {
+            this.width = this.width + width
+            console.log(this.width)
+        }
+        this.addGrid = () => {
+            let grid = creatGrid()
+            this.scene.add(grid)
+        }
 
-        this.init = (mount: HTMLElement | MutableRefObject<null>) => {
-            const width = 900;
-            const height = 400;
+        this.addElement=(element: Mesh | Mesh[],inGroup:boolean=false,x:number=0,y:number=0,z:number=0)=>{
 
-            this.camera = new THREE.PerspectiveCamera(
-                75,
-                width / height,
-                0.1,
-                5000
-            );
-            this.camera.position.z = 15;
-            // this.camera.position.y = 7;
+            if (inGroup && element instanceof Array) (<THREE.Group>this.group).add(...element)
+            else if (inGroup && element instanceof Mesh)(<THREE.Group>this.group).add(element)
 
-            //добавляем элементы в сцену
+            const addGroup = new THREE.Group();
 
+            element instanceof Array
+                ? (<THREE.Group>addGroup).add(...element)
+                : (<THREE.Group>addGroup).add(element);
+
+            addGroup.position.set(x, y, z)
+            this.scene.add(addGroup)
+        }
+        this.init = (mount: HTMLElement | MutableRefObject<any>) => {
+            console.log(22)
+            // add elements in scene
             this.group = new THREE.Group();
 
             this.element instanceof Array
-                ? (<THREE.Mesh[]>this.element).forEach(item => (<THREE.Group>this.group).add(item))
+                ? (<THREE.Group>this.group).add(...this.element)
                 : (<THREE.Group>this.group).add(this.element);
 
             this.group.position.set(0, 0, 0)
             this.scene.add(this.group)
 
-            // сетка
-            const helper = new THREE.GridHelper(100, 100);
-            helper.position.y = -1;
-            // @ts-ignore
-            helper.material.opacity = 0.25;
-            // @ts-ignore
-            helper.material.transparent = true;
-            this.scene.add(helper);
+            // add grid in scene
+            if (this.grid) this.scene.add(this.grid);
 
-            // свет
-            const lights = [];
-            lights[0] = new THREE.PointLight(0xffffff, 1, 0);
-            lights[1] = new THREE.PointLight(0xffffff, 1, 0);
-            lights[2] = new THREE.PointLight(0xffffff, 1, 0);
+            // add light in scene
+            if (this.lights) this.lights instanceof Array
+                ? this.scene.add(...this.lights)
+                : this.scene.add(this.lights);
 
-            lights[0].position.set(0, 200, 0);
-            lights[1].position.set(100, 200, 100);
-            lights[2].position.set(-100, -200, -100);
+            // enter size render window
+            (<THREE.WebGLRenderer>this.renderer).setSize(this.width, this.height);
 
-            this.scene.add(lights[0]);
-            this.scene.add(lights[1]);
-            this.scene.add(lights[2]);
-
-            (<THREE.WebGLRenderer>this.renderer).setSize(width, height);
-
+            // creat canvas element
             const canvas = (<THREE.WebGLRenderer>this.renderer).domElement
 
-            // @ts-ignore // because на улице мороз ) не хочет оно ref ловить ...
-            mount.current.appendChild(canvas);
-
-            createMoveAnimation({
-                mesh: this.group,
-                startPosition: new THREE.Vector3(0, 10, 0),
-                endPosition: new THREE.Vector3(0, 0,),
-                array: this.animationsObjects
-            })
-
-            this.controls = new OrbitControls(this.camera, canvas);
-            // @ts-ignore
-
-            // -
-            {
-                const skyColor = 0xB1E1FF;  // light blue
-                const groundColor = 0xB97A20;  // brownish orange
-                const intensity = 1;
-                const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
-                this.scene.add(light);
+            // add canvas element in DOM , "if" for don't canvas add in DOM more 1 time if useEffect call more 1 time
+            console.log("add", this.mountTime)
+            if (this.mountTime) {
+                this.mountTime = false
+                console.log("after", this.mountTime)
+                console.log(this)
+                // @ts-ignore // because на улице мороз ) не хочет оно ref ловить ...
+                mount.current.appendChild(canvas)
             }
 
-            {
-                const color = 0xFFFFFF;
-                const intensity = 1;
-                const light = new THREE.DirectionalLight(color, intensity);
-                light.position.set(5, 10, 2);
-                this.scene.add(light);
-                this.scene.add(light.target);
-            }
+            if (!(this.camera instanceof THREE.CubeCamera)) this.controls = new OrbitControls(this.camera, canvas);
 
+            getGLTElement('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', this.scene)
 
-            getGLTElement('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf',this.scene)
-
-            // const gltfLoader = new GLTFLoader();
-            // gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf1', (gltf) => {
-            //     const root = gltf.scene;
-            //     this.scene.add(root);
-            //     // compute the box that contains all the stuff
-            //     // from root and below
-            //     const box = new THREE.Box3().setFromObject(root);
-            //
-            //     const boxSize = box.getSize(new THREE.Vector3()).length();
-            //     const boxCenter = box.getCenter(new THREE.Vector3());
-                // set the camera to frame the box
-                // frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
-                // update the Trackball controls to handle the new size
-                // this.controls.maxDistance = boxSize * 10;
-                // controls.target.copy(boxCenter);
-                // controls.update();
-            // })
-            // -
-            // - импортируем модель по url
-            // const objLoader = new OBJLoader();
-            // objLoader.load('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj',
-            //     (root: THREE.Object3D) => {
-            //     root.position.set(6, 0, -6)
-            //     this.scene.add(root);
-            // });
-
-            getOBJElement('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj',this.scene,6, 0, -6)
-            //  -
+            getOBJElement('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj', this.scene, 6, 0, -6)
 
             this.startAnimation()
         }
+
+
+        // createMoveAnimation({
+        //     mesh: this.group,
+        //     startPosition: new THREE.Vector3(0, 10, 0),
+        //     endPosition: new THREE.Vector3(0, 0,),
+        //     array: this.animationsObjects
+        // })
 
         // старт рендер функция
         this.startAnimation = () => {

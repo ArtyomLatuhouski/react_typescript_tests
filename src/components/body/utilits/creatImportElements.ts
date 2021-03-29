@@ -1,30 +1,29 @@
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+// OUTER
+import * as THREE from "three";
+import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 
-export class World {
-    constructor() {
-// synchronous setup here
-// create camera, renderer, scene, etc.
-    }
-    async init() {
-// asynchronous setup here
-// load bird models
-        loadBirds()
-    }
+
+// !! получение элемента с расшифровкой OBJ Loader
+export function getOBJElement(url: string, scene: THREE.Scene, x: number = 0, y: number = 0, z: number = 0) {
+    const objLoader = new OBJLoader();
+    objLoader.load(url, (root: THREE.Object3D) => {
+        root.position.set(x, y, z)
+        scene.add(root)
+    });
 }
 
-async function loadBirds() {
-    const loader = new GLTFLoader();
-    const parrotData = await loader.loadAsync('https://gltf-viewer.donmccurdy.com/');
-    console.log('Squaaawk!', parrotData);
-}
 
-// @ts-ignore
-//import model from '../../../../models/flycatcher.glb';
-// let loader = new GLTFLoader();
-// loader.load(model, function (geometry) {
-//     console.log(model)
-//     // if the model is loaded successfully, add it to your scene here
-// }, undefined, function (err) {
-//     console.error(err);
-// });
+// !! получение элемента с расшифровкой GLTFLoader
+
+export function getGLTElement(url: string, scene: THREE.Scene, x: number = 0, y: number = 0, z: number = 0) {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load(url, (gltf) => {
+        console.log(gltf)
+        const root = gltf.scene;
+        console.log(root)
+        root.position.set(x, y, z)
+        scene.add(root);
+    })
+}
