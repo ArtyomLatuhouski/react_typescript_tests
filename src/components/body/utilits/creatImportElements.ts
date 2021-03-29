@@ -13,14 +13,11 @@ export class World {
     }
 }
 
-
 async function loadBirds() {
     const loader = new GLTFLoader();
     const parrotData = await loader.loadAsync('https://gltf-viewer.donmccurdy.com/');
     console.log('Squaaawk!', parrotData);
 }
-
-
 
 // @ts-ignore
 //import model from '../../../../models/flycatcher.glb';

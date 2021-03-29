@@ -3,8 +3,8 @@ import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Mesh} from "three";
 import {MutableRefObject} from "react";
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader.js';
+import {getGLTElement, getOBJElement} from "./creatMashElemFunctions";
+
 
 //  !! функция создания объекта
 
@@ -16,15 +16,15 @@ export class Creator {
     private group: THREE.Group | null;
     private renderer: THREE.WebGLRenderer | undefined;
     private startAnimation: () => void;
-    private camera: THREE.PerspectiveCamera | null;
+    private camera: THREE.PerspectiveCamera |THREE.OrthographicCamera|THREE.CubeCamera | null;
     private controls: OrbitControls | undefined;
     private animationsObjects: any[]
 
-    constructor(element: Mesh | Mesh[]) {
+    constructor(element: Mesh | Mesh[],scene:THREE.Scene,camera:THREE.PerspectiveCamera | THREE.OrthographicCamera |THREE.CubeCamera) {
         this.element = element
         this.camera = null
         this.group = null
-        this.scene = new THREE.Scene()
+        this.scene = scene
         this.animationsObjects = []
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
@@ -40,7 +40,7 @@ export class Creator {
                 0.1,
                 5000
             );
-            this.camera.position.z = 1115;
+            this.camera.position.z = 15;
             // this.camera.position.y = 7;
 
             //добавляем элементы в сцену
@@ -111,35 +111,39 @@ export class Creator {
                 this.scene.add(light);
                 this.scene.add(light.target);
             }
-            const gltfLoader = new GLTFLoader();
-            gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
-                const root = gltf.scene;
-                this.scene.add(root);
-                // compute the box that contains all the stuff
-                // from root and below
-                const box = new THREE.Box3().setFromObject(root);
 
-                const boxSize = box.getSize(new THREE.Vector3()).length();
-                const boxCenter = box.getCenter(new THREE.Vector3());
 
+            getGLTElement('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf',this.scene)
+
+            // const gltfLoader = new GLTFLoader();
+            // gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf1', (gltf) => {
+            //     const root = gltf.scene;
+            //     this.scene.add(root);
+            //     // compute the box that contains all the stuff
+            //     // from root and below
+            //     const box = new THREE.Box3().setFromObject(root);
+            //
+            //     const boxSize = box.getSize(new THREE.Vector3()).length();
+            //     const boxCenter = box.getCenter(new THREE.Vector3());
                 // set the camera to frame the box
                 // frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
-
                 // update the Trackball controls to handle the new size
                 // this.controls.maxDistance = boxSize * 10;
                 // controls.target.copy(boxCenter);
                 // controls.update();
-            })
+            // })
             // -
-
             // - импортируем модель по url
-            const objLoader = new OBJLoader();
-            objLoader.load('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj',
-                (root: THREE.Object3D) => {
-                root.position.set(6, 0, -6)
-                this.scene.add(root);
-            });
+            // const objLoader = new OBJLoader();
+            // objLoader.load('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj',
+            //     (root: THREE.Object3D) => {
+            //     root.position.set(6, 0, -6)
+            //     this.scene.add(root);
+            // });
+
+            getOBJElement('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj',this.scene,6, 0, -6)
             //  -
+
             this.startAnimation()
         }
 
