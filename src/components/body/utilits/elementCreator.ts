@@ -1,7 +1,7 @@
 // outer
 import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import {Mesh} from "three";
+import {Group, Mesh} from "three";
 import {MutableRefObject} from "react";
 import {getGLTElement, getOBJElement} from "./creatImportElements";
 import {creatGrid} from "./otherConstructors";
@@ -31,6 +31,9 @@ export class Creator {
     setWidth: (width: number) => void;
     addGrid: () => void;
     addElement: (element: (Mesh | Mesh[]), inGroup?: boolean, x?: number, y?: number, z?: number) => void;
+    eventClick: () => void;
+    private canvas: HTMLCanvasElement | undefined;
+
 
 
 
@@ -77,6 +80,7 @@ export class Creator {
             addGroup.position.set(x, y, z)
             this.scene.add(addGroup)
         }
+
         this.init = (mount: HTMLElement | MutableRefObject<any>) => {
             console.log(22)
             // add elements in scene
@@ -101,7 +105,7 @@ export class Creator {
             (<THREE.WebGLRenderer>this.renderer).setSize(this.width, this.height);
 
             // creat canvas element
-            const canvas = (<THREE.WebGLRenderer>this.renderer).domElement
+            this.canvas = (<THREE.WebGLRenderer>this.renderer).domElement
 
             // add canvas element in DOM , "if" for don't canvas add in DOM more 1 time if useEffect call more 1 time
             console.log("add", this.mountTime)
@@ -110,17 +114,62 @@ export class Creator {
                 console.log("after", this.mountTime)
                 console.log(this)
                 // @ts-ignore // because на улице мороз ) не хочет оно ref ловить ...
-                mount.current.appendChild(canvas)
+                mount.current.appendChild(this.canvas)
             }
 
-            if (!(this.camera instanceof THREE.CubeCamera)) this.controls = new OrbitControls(this.camera, canvas);
+            if (!(this.camera instanceof THREE.CubeCamera)) this.controls = new OrbitControls(this.camera, this.canvas);
 
-            getGLTElement('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', this.scene)
-
-            getOBJElement('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj', this.scene, 6, 0, -6)
+            // getGLTElement('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', this.scene)
+            //
+            // getOBJElement('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj', this.scene, 6, 0, -6)
 
             this.startAnimation()
         }
+
+        this.eventClick=()=>{
+            let selectedObject = null;
+            let rot = 0
+
+            const onDocumentMouseClick = (event: any) => {
+
+                event.preventDefault();
+
+                let intersects = getIntersects(event.layerX, event.layerY , this.camera,<THREE.Group>this.group,this.width,this.height);
+                if (intersects.length > 0) {
+                    selectedObject = intersects[0].object;
+                    // @ts-ignore
+                    selectedObject.material.color.set('#f00');
+                    rot += 10
+                    selectedObject.rotation.y = Math.PI * rot / 180;
+                }
+            }
+
+            let raycaster = new THREE.Raycaster();
+            let mouseVector = new THREE.Vector2();
+
+            function getIntersects(x:number, y:number , camera : Camera ,cube :THREE.Group ,width:number,height:number) {
+                console.log("default x :" , x)
+                console.log("default y :" , y)
+                let Crx = (x / width) * 2 - 1;
+                let Cry = -((y-120) / height) * 2 + 1;
+                console.log("value x :" , Crx)
+                console.log("value y :" , Cry)
+                // let Crz = 0.5;
+                mouseVector.set(Crx, Cry);
+                console.log(raycaster)
+
+                raycaster.setFromCamera(mouseVector,<THREE.PerspectiveCamera | THREE.OrthographicCamera>camera);
+
+
+                // объект проверяемый на пересечение с узлом
+                return raycaster.intersectObject(cube, true);
+            }
+
+
+
+            (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
+        }
+
 
 
         // createMoveAnimation({
