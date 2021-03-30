@@ -3,8 +3,10 @@ import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Group, Mesh} from "three";
 import {MutableRefObject} from "react";
-import {getGLTElement, getOBJElement} from "./creatImportElements";
+import {getGLTElement, getJSONElement, getOBJElement} from "./creatImportElements";
 import {creatGrid} from "./otherConstructors";
+import {creatBox} from "./creatMashElemFunctions";
+
 
 
 type Light = THREE.DirectionalLight | THREE.PointLight | THREE.HemisphereLight
@@ -82,7 +84,7 @@ export class Creator {
         }
 
         this.init = (mount: HTMLElement | MutableRefObject<any>) => {
-            console.log(22)
+
             // add elements in scene
             this.group = new THREE.Group();
 
@@ -108,20 +110,20 @@ export class Creator {
             this.canvas = (<THREE.WebGLRenderer>this.renderer).domElement
 
             // add canvas element in DOM , "if" for don't canvas add in DOM more 1 time if useEffect call more 1 time
-            console.log("add", this.mountTime)
+
             if (this.mountTime) {
                 this.mountTime = false
-                console.log("after", this.mountTime)
-                console.log(this)
                 // @ts-ignore // because на улице мороз ) не хочет оно ref ловить ...
                 mount.current.appendChild(this.canvas)
             }
 
-            if (!(this.camera instanceof THREE.CubeCamera)) this.controls = new OrbitControls(this.camera, this.canvas);
+            if (!(this.camera instanceof THREE.CubeCamera)) this.controls = new OrbitControls(this.camera, this.canvas,);
 
             // getGLTElement('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', this.scene)
+            getGLTElement('./glTF/Duck.gltf', this.scene,6, 0, -6)
             //
             // getOBJElement('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj', this.scene, 6, 0, -6)
+
 
             this.startAnimation()
         }
@@ -138,9 +140,11 @@ export class Creator {
                 if (intersects.length > 0) {
                     selectedObject = intersects[0].object;
                     // @ts-ignore
-                    selectedObject.material.color.set('#f00');
-                    rot += 10
-                    selectedObject.rotation.y = Math.PI * rot / 180;
+                    if (selectedObject.material.color.getHex()==creatBox().material.color.getHex())selectedObject.material.color.set('#bde045')
+                    // @ts-ignore
+                    else if (selectedObject.material.color.toJSON()==12443717)selectedObject.material.color.set('#e71671')
+                    // rot += 10
+                    // selectedObject.rotation.y = Math.PI * rot / 180;
                 }
             }
 
@@ -148,29 +152,20 @@ export class Creator {
             let mouseVector = new THREE.Vector2();
 
             function getIntersects(x:number, y:number , camera : Camera ,cube :THREE.Group ,width:number,height:number) {
-                console.log("default x :" , x)
-                console.log("default y :" , y)
+
                 let Crx = (x / width) * 2 - 1;
                 let Cry = -((y-120) / height) * 2 + 1;
-                console.log("value x :" , Crx)
-                console.log("value y :" , Cry)
-                // let Crz = 0.5;
+
                 mouseVector.set(Crx, Cry);
-                console.log(raycaster)
 
                 raycaster.setFromCamera(mouseVector,<THREE.PerspectiveCamera | THREE.OrthographicCamera>camera);
-
 
                 // объект проверяемый на пересечение с узлом
                 return raycaster.intersectObject(cube, true);
             }
 
-
-
             (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
         }
-
-
 
         // createMoveAnimation({
         //     mesh: this.group,
@@ -181,9 +176,10 @@ export class Creator {
 
         // старт рендер функция
         this.startAnimation = () => {
-            (<THREE.Group>this.group).rotation.x += 0.01;
-            (<THREE.Group>this.group).rotation.y += 0.01;
-            (<THREE.Group>this.group).rotation.z += 0.01;
+            // (<THREE.Group>this.group).rotation.x += 0.01;
+            // (<THREE.Group>this.group).rotation.y += 0.01;
+            // (<THREE.Group>this.group).rotation.z += 0.01;
+
 
             (<THREE.WebGLRenderer>this.renderer).render(this.scene, <THREE.PerspectiveCamera>this.camera);
 

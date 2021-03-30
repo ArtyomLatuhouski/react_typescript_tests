@@ -30,7 +30,7 @@ const TestClick: React.FC = (props) => {
     useEffect(()=>canv.addGrid(),[])
 
     useEffect(() => {
-        console.log(333)
+
         canv.init(canvasElemRef1)
     }, [canv])
 
