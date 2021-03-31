@@ -6,11 +6,13 @@ import TestClick from "./TestClick";
 // LOCAL
 
 
-
 const Other: React.FC = () => {
     return (
         <>
-            <TestClick/>
+            <div className="canvasContainer" >
+                <TestClick/>
+            </div>
+
         </>
     )
 }

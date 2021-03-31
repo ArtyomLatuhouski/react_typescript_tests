@@ -61,7 +61,7 @@ export class Creator {
         }
 
         this.addGrid = () => {
-            let grid = creatGrid()
+            let grid = creatGrid(10000,1000)
             this.scene.add(grid)
         }
 
@@ -84,7 +84,8 @@ export class Creator {
         }
 
         this.init = (mount: HTMLElement | MutableRefObject<any>) => {
-
+            // @ts-ignore
+            console.log(mount.constructor)
             // add elements in scene
             this.group = new THREE.Group();
 
@@ -154,13 +155,13 @@ export class Creator {
             function getIntersects(x:number, y:number , camera : Camera ,cube :THREE.Group ,width:number,height:number) {
 
                 let Crx = (x / width) * 2 - 1;
-                let Cry = -((y-120) / height) * 2 + 1;
+                let Cry = -((y) / height) * 2 + 1;
 
                 mouseVector.set(Crx, Cry);
 
                 raycaster.setFromCamera(mouseVector,<THREE.PerspectiveCamera | THREE.OrthographicCamera>camera);
 
-                // объект проверяемый на пересечение с узлом
+                // cube - объект проверяемый на пересечение с узлом
                 return raycaster.intersectObject(cube, true);
             }
 
@@ -176,9 +177,9 @@ export class Creator {
 
         // старт рендер функция
         this.startAnimation = () => {
-            // (<THREE.Group>this.group).rotation.x += 0.01;
-            // (<THREE.Group>this.group).rotation.y += 0.01;
-            // (<THREE.Group>this.group).rotation.z += 0.01;
+            (<THREE.Group>this.group).rotation.x += 0.01;
+            (<THREE.Group>this.group).rotation.y += 0.01;
+            (<THREE.Group>this.group).rotation.z += 0.01;
 
 
             (<THREE.WebGLRenderer>this.renderer).render(this.scene, <THREE.PerspectiveCamera>this.camera);

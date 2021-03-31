@@ -27,8 +27,6 @@ export function getJSONElement(url: string, scene: THREE.Scene,
         root.position.set(x, y, z)
         scene.add(root)
     });
-
-    objLoader.parse()
 }
 
 

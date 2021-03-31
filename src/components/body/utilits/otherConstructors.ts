@@ -12,7 +12,6 @@ export function lightThreePoints() {
     lights[2].position.set(-100, -200, -100);
 
     return lights
-
 }
 
 
@@ -22,7 +21,6 @@ export function versionTwo() {
     const intensity = 1;
 
     return new THREE.HemisphereLight(skyColor, groundColor, intensity);
-
 }
 
 
@@ -32,14 +30,11 @@ export function versionThree() {
         const light = new THREE.DirectionalLight(color, intensity);
         light.position.set(5, 10, 2);
 
-
     return light
-
 }
 
 
-
-export function creatGrid() {
+export function creatGrid(width:number=100,height:number=100) {
     const helper = new THREE.GridHelper(100, 100);
     helper.position.y = -1;
     // @ts-ignore

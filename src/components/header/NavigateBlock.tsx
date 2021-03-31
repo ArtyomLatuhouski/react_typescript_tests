@@ -15,7 +15,7 @@ const navItems:INavItems[]=[
     {path:"",name:"ajax TypeScript"},
     // {path:"scene",name:"scene experts"},
     {path:"camera",name:"camera experts"},
-    // {path:"geo-mat",name:"geometry & materials experts"},
+    {path:"box",name:"box photo"},
     {path:"other",name:"Other experts"}
 ]
 
