@@ -24,3 +24,15 @@ export function creatScene(background: THREE.Color | THREE.Texture | THREE.WebGL
     return scene
 
 }
+
+
+
+
+
+export function creatPerspectiveCamera(width:number,height:number){
+    const  cameraPoint = new THREE.PerspectiveCamera(75, width / height, 0.1, 5000)
+    cameraPoint.position.z = 21;
+    cameraPoint.position.y = 15;
+    return cameraPoint
+}
+

@@ -1,40 +1,28 @@
 // OUTER
 import React, {useEffect, useMemo, useRef, useState} from 'react'
-import * as THREE from "three"
 
 //LOCAL
-import {creatBox, generationCubs} from "../utilits/creatMashElemFunctions";
-import {Creator} from "../utilits/elementCreator";
-import {lightThreePoints} from "../utilits/otherConstructors";
-import {creatScene} from "../utilits/creatSceneFunction";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {BaseCreator} from "../../../threejs/root";
-
-
+import {creatPerspectiveCamera} from "../../../threejs/scene&camera";
 
 
 
 const BoxComponent: React.FC = (props) => {
-    const canvasElemRef1 = useRef(null)
-    const [width, setWidth] = useState(window.innerWidth)
-    const [height, setHeight] = useState(window.innerHeight)
+    const canvasContainer= useRef(null)
 
-    const camera = useMemo((width,height)=>{
-        const  cameraPoint = new THREE.PerspectiveCamera(75, width / height, 0.1, 5000)
-        cameraPoint.position.z = 21;
-        cameraPoint.position.y = 15;
-        return cameraPoint
-    },[width,height])
+    const [width, setWidth] = useState(window.outerWidth)
+    const [height, setHeight] = useState(window.outerHeight)
+
+    const camera = useMemo(()=>creatPerspectiveCamera(width,height),[width,height])
+
+    const canvas= useRef(new BaseCreator(camera,width,height))
 
 
-    const canvas= useRef(new BaseCreator(camera))
-    useEffect(() => {
-
-    }, [])
+    useEffect(() => canvas.current.init(canvasContainer), [])
 
     return (
         <>
-            <div ref={canvasElemRef1}/>
+            <div ref={canvasContainer} style={{position:"absolute", top:0,left:0}}/>
         </>
 
 

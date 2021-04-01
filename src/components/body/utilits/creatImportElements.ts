@@ -16,8 +16,6 @@ export function getOBJElement(url: string, scene: THREE.Scene,
     });
 }
 
-
-
 // !! получение элемента с расшифровкой JSON Loader
 export function getJSONElement(url: string, scene: THREE.Scene,
                               x: number = 0, y: number = 0, z: number = 0) {
@@ -28,8 +26,6 @@ export function getJSONElement(url: string, scene: THREE.Scene,
         scene.add(root)
     });
 }
-
-
 
 // !! получение элемента с расшифровкой GLTFLoader
 
