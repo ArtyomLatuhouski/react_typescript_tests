@@ -120,10 +120,10 @@ export class Creator {
 
             if (!(this.camera instanceof THREE.CubeCamera)) this.controls = new OrbitControls(this.camera, this.canvas,);
 
-            // getGLTElement('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', this.scene)
-            getGLTElement('./glTF/Duck.gltf', this.scene,6, 0, -6)
+            getGLTElement('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', this.scene)
+
             //
-            // getOBJElement('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj', this.scene, 6, 0, -6)
+            getOBJElement('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj', this.scene, 6, 0, -6)
 
 
             this.startAnimation()

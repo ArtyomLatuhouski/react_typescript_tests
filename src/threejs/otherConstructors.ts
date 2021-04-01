@@ -37,9 +37,7 @@ export function versionThree() {
 export function creatGrid(width:number=100,height:number=100) {
     const helper = new THREE.GridHelper(100, 100);
     helper.position.y = -1;
-    // @ts-ignore
-    helper.material.opacity = 0.25;
-    // @ts-ignore
-    helper.material.transparent = true;
+    if (helper.material instanceof THREE.Material) helper.material.opacity = 0.25;
+    if (helper.material instanceof THREE.Material) helper.material.transparent = true;
     return helper
 }

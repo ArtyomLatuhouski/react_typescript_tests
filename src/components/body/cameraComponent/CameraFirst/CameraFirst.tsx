@@ -48,8 +48,6 @@ const CameraFirst: React.FC = (props) => {
                 })
             }}/>
         </>
-
-
     )
 }
 

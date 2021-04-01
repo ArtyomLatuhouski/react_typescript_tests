@@ -29,10 +29,11 @@ export function creatScene(background: THREE.Color | THREE.Texture | THREE.WebGL
 
 
 
-export function creatPerspectiveCamera(width:number,height:number){
+export function creatPerspectiveCamera(width:number,height:number,x:number=0,y:number=0,z:number=5){
     const  cameraPoint = new THREE.PerspectiveCamera(75, width / height, 0.1, 5000)
-    cameraPoint.position.z = 21;
-    cameraPoint.position.y = 15;
+    cameraPoint.position.z = z;
+    cameraPoint.position.x = x;
+    cameraPoint.position.y = y;
     return cameraPoint
 }
 
